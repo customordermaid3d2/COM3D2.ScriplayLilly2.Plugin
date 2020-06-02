@@ -943,13 +943,21 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 scriplayContext.Update();
             }
             //各メイド処理 각 메이드 처리
-            foreach (IMaid maid in maidList)
+            try
             {
-                Util.sw_start();
-                //再生処理　一括変更 재생 처리 일괄 변경
-                Util.sw_showTime("update_playing");
-                maid.update();
-                Util.sw_stop();
+                foreach (IMaid maid in maidList)
+                {
+                    Util.sw_start();
+                    //再生処理　一括変更 재생 처리 일괄 변경
+                    Util.sw_showTime("update_playing");
+                    maid.update();
+                    Util.sw_stop();
+                }
+            }
+            catch (Exception)
+            {
+                Util.debug("Exception update");
+                initMaidList();
             }
         }
         /// <summary>
@@ -2105,7 +2113,7 @@ figcaption {{
             public void change_onceVoice(List<string> VoiceList, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
             {
                 if (isMan) { Util.info("ご主人様の音声は変更できません"); return; }
-                if (getPlayingVoiceState() == PlayingVoiceState.LoopVoice)
+                if (getPlayingVoiceState() == PlayingVoiceState.LoopVoiceisPlayingMotion)
                 {
                     loopVoiceBackuped = true;
                 }
