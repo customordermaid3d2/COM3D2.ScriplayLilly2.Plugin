@@ -2113,7 +2113,7 @@ figcaption {{
             public void change_onceVoice(List<string> VoiceList, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
             {
                 if (isMan) { Util.info("ご主人様の音声は変更できません"); return; }
-                if (getPlayingVoiceState() == PlayingVoiceState.LoopVoiceisPlayingMotion)
+                if (getPlayingVoiceState() == PlayingVoiceState.LoopVoice)
                 {
                     loopVoiceBackuped = true;
                 }
