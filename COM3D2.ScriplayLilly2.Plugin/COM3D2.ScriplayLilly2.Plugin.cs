@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityInjector.Attributes;
 using PluginExt;
 using System.Collections;
@@ -198,7 +199,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         public static void initMaidList()
         {
             if (maidList == null) return;
-            Util.info("メイド一覧読み込み開始메이드 목록을 불러오는 시작");
+            //Util.info("メイド一覧読み込み開始메이드 목록을 불러오는 시작");
             maidList.Clear();
             manList.Clear();
             CharacterMgr cm = GameMain.Instance.CharacterMgr;
@@ -231,6 +232,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         public void Awake()
         {
             GameObject.DontDestroyOnLoad(this);
+            SceneManager.sceneLoaded += OnSceneLoaded;
             string gameDataPath = UnityEngine.Application.dataPath;
             loadSetting();
             // ChuBLip判別 ChuBLip 판별
@@ -354,6 +356,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         public void OnLevelWasLoaded(int level)
         {
+
             VRUI.OnLevelWasLoaded(level);
             //初回スクリプト読み込み
             if (scripts_fullpathList.Count == 0) reload_scriptList();
@@ -367,7 +370,17 @@ namespace COM3D2.ScriplayLilly2.Plugin
             //}
             initMaidList();
         }
-        private bool isYotogiScene(int sceneLevel)
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
+        {
+            
+            VRUI.OnLevelWasLoaded(0);
+            if (scripts_fullpathList.Count == 0) reload_scriptList();
+            initMaidList();
+        }
+
+
+            private bool isYotogiScene(int sceneLevel)
         {
             return GameMain.Instance.CharacterMgr.GetMaidCount() != 0;
             //int yotogiManagerCount = FindObjectsOfType<YotogiManager>().Length;
@@ -937,10 +950,18 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 string s = debug_scriplayCreateQueue.Dequeue();
                 this.scriplayContext = ScriplayContext.readScriptFile("スクリプト実行テスト스크립트 실행 테스트", s.Split(new string[] { "\r\n" }, StringSplitOptions.None));
             }
-            //スクリプトの実行v
-            if (!scriplayContext.scriptFinished)
+            try
             {
-                scriplayContext.Update();
+                //スクリプトの実行v 스크립트 실행 v
+                if (!scriplayContext.scriptFinished)
+                {
+                    scriplayContext.Update();
+                }
+            }
+            catch (Exception)
+            {
+                initMaidList();
+                scriplayContext.scriptFinished = true;
             }
             //各メイド処理 각 메이드 처리
             try

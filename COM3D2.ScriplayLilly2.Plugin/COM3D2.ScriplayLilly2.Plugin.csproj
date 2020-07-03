@@ -53,7 +53,7 @@
       <HintPath>F:\COM3D2\COM3D2x64_Data\Managed\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="PluginExt">
-      <HintPath>F:\COM3D2_my\Sybaris\UnityInjector\PluginExt.dll</HintPath>
+      <HintPath>F:\COM3D2\Sybaris\UnityInjector\PluginExt.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
