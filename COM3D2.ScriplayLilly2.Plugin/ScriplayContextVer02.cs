@@ -156,7 +156,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                     string labelStr = matched.Groups[1].Value;    //1 origin
                     if (ret.labelMap.ContainsKey(labelStr))
                     {
-                        Util.info(string.Format("line:{0} スクリプト解析エラー：ラベル「{1}」が複数あります。スクリプトを中断します。", i.ToString(), labelStr));
+                        Util.Info(string.Format("line:{0} スクリプト解析エラー：ラベル「{1}」が複数あります。スクリプトを中断します。", i.ToString(), labelStr));
                         ret.scriptFinished = true;
                         return ret;
                     }
@@ -258,7 +258,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 {
                     //스크립트 종료
                     this.scriptFinished = true;
-                    Util.info(string.Format("모든 스크립트를 실행했습니다. 行数：{0},{1}", currentExecuteLine.ToString(), scriptName));
+                    Util.Info(string.Format("모든 스크립트를 실행했습니다. 行数：{0},{1}", currentExecuteLine.ToString(), scriptName));
                     return;
                 }
                 string line = scriptArray[currentExecuteLine];
@@ -579,7 +579,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                         info(string.Format("変数名がみつかりません:{0}", varName));
                         break;
                     }
-                    Util.debug(variableMap[varName] + " " + endBlankCharacter);
+                    Util.Debug(variableMap[varName] + " " + endBlankCharacter);
                     line = reg_replaceVariable2.Replace(line, variableMap[varName] + " " + endBlankCharacter, 1);      //一致箇所1回だけ置換
                 }
             }
@@ -626,12 +626,12 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 if (paramDict[key_restore] == "1")
                 {
                     this.restoreProp_onTearDown = true;
-                    Util.info("スクリプト終了時のメイドProp復元を有効にしました。");
+                    Util.Info("スクリプト終了時のメイドProp復元を有効にしました。");
                 }
                 else
                 {
                     this.restoreProp_onTearDown = false;
-                    Util.info("スクリプト終了時のメイドProp復元を無効にしました。");
+                    Util.Info("スクリプト終了時のメイドProp復元を無効にしました。");
                 }
             }
         }
@@ -710,7 +710,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_shapeKey(Dictionary<string, string> paramDict)
         {
-            Util.debug(string.Format("line{0} : shapeKey ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : shapeKey ", currentExecuteLine.ToString()));
             List<IMaid> charaList = selectMaid(paramDict); charaList.AddRange(selectMan(paramDict));
             string sTag = "";
             if (paramDict.ContainsKey(key_name)) { sTag = paramDict[key_name]; }
@@ -749,7 +749,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_eyeToCam(Dictionary<string, string> paramDict)
         {
-            Util.debug(string.Format("line{0} : eyeToCam ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : eyeToCam ", currentExecuteLine.ToString()));
             List<IMaid> maidList = selectMaid(paramDict);
             foreach (IMaid maid in maidList)
             {
@@ -784,7 +784,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_headToCam(Dictionary<string, string> paramDict)
         {
-            Util.debug(string.Format("line{0} : headToCam ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : headToCam ", currentExecuteLine.ToString()));
             List<IMaid> charaList = selectMaid(paramDict); charaList.AddRange(selectMan(paramDict));
             foreach (IMaid maid in charaList)
             {
@@ -860,7 +860,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             string paramStr = "";
             if (!reg.IsMatch(lineStr))
             {
-                Util.debug(string.Format("line:{0} parseParameter 인수 형식이 잘못되었습니다.。　入力：{1}, パターン:{2}", currentExecuteLine, lineStr, reg.ToString()));
+                Util.Debug(string.Format("line:{0} parseParameter 인수 형식이 잘못되었습니다.。　入力：{1}, パターン:{2}", currentExecuteLine, lineStr, reg.ToString()));
                 return new Dictionary<string, string>();
             }
             paramStr = reg.Match(lineStr).Groups[1].Value;
@@ -893,7 +893,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 string v = Util.pickOneOrEmptyString(new List<string>(values));
                 ret.Add(kv[0].ToLower(), v);
             }
-            Util.debug(string.Format("line{0} : parseParameter成功 : {1}", currentExecuteLine.ToString(), Util.list2Str(ret)));
+            Util.Debug(string.Format("line{0} : parseParameter成功 : {1}", currentExecuteLine.ToString(), Util.list2Str(ret)));
             return ret;
         }
         static Regex parseParameter_regex = new Regex(@"\s+");
@@ -924,7 +924,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             catch (Exception e)
             {
                 info(string.Format("数値を読み込めませんでした : {0}", floatStr));
-                Util.debug(e.StackTrace);
+                Util.Debug(e.StackTrace);
             }
             return ret;
         }
@@ -956,7 +956,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_sound(Dictionary<string, string> paramDict, bool loop)
         {
-            Util.debug(string.Format("line{0} : sound ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : sound ", currentExecuteLine.ToString()));
             if (paramDict.ContainsKey(key_name))
             {
                 string name = paramDict[key_name];
@@ -970,7 +970,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                     case "slap_low": name = "se012.ogg"; break;
                     case "slap_high": name = "se013.ogg"; break;
                 }
-                Util.debug("@sound name:" + name);
+                Util.Debug("@sound name:" + name);
                 change_SE(name, loop);
             }
             else
@@ -1008,7 +1008,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_motion(Dictionary<string, string> paramDict)
         {
-            Util.debug(string.Format("line{0} : motion ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : motion ", currentExecuteLine.ToString()));
             List<IMaid> charaList = selectMaid(paramDict); charaList.AddRange(selectMan(paramDict));
             foreach (IMaid maid in charaList)
             {
@@ -1041,7 +1041,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void exec_face(Dictionary<string, string> paramDict)
         {
-            Util.debug(string.Format("line{0} : face ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : face ", currentExecuteLine.ToString()));
             List<IMaid> maidList = selectMaid(paramDict);
             foreach (IMaid maid in maidList)
             {
@@ -1205,9 +1205,9 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 if (paramDict.ContainsKey(key_rz)) rz = parseFloat(paramDict[key_rz]);
                 //Scriplay座標系→ワールド座標系
                 PosRot newpr = toWorld(new Vector3(x, y, z), new Vector3(rx, ry, rz));
-                Util.debug(string.Format("pos移動　old:{0} -> new:{1}", pr.pos.ToString(), newpr.pos.ToString()));
+                Util.Debug(string.Format("pos移動　old:{0} -> new:{1}", pr.pos.ToString(), newpr.pos.ToString()));
                 maid.change_positionAbsolute(newpr.pos.x, newpr.pos.y, newpr.pos.z);
-                Util.debug(string.Format("pos回転　old:{0} -> new:{1}", pr.rot.ToString(), newpr.rot.ToString()));
+                Util.Debug(string.Format("pos回転　old:{0} -> new:{1}", pr.rot.ToString(), newpr.rot.ToString()));
                 maid.change_angleAbsolute(newpr.rot.x, newpr.rot.y, newpr.rot.z);
             }
         }
@@ -1234,9 +1234,9 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 if (paramDict.ContainsKey(key_rz)) rz += parseFloat(paramDict[key_rz]);
                 //Scriplay座標系→ワールド座標系
                 PosRot newpr = toWorld(new Vector3(x, y, z), new Vector3(rx, ry, rz));
-                Util.debug(string.Format("move移動　old:{0} -> new:{1}", pr.pos.ToString(), newpr.pos.ToString()));
+                Util.Debug(string.Format("move移動　old:{0} -> new:{1}", pr.pos.ToString(), newpr.pos.ToString()));
                 maid.change_positionAbsolute(newpr.pos.x, newpr.pos.y, newpr.pos.z);
-                Util.debug(string.Format("move回転　old:{0} -> new:{1}", pr.rot.ToString(), newpr.rot.ToString()));
+                Util.Debug(string.Format("move回転　old:{0} -> new:{1}", pr.rot.ToString(), newpr.rot.ToString()));
                 maid.change_angleAbsolute(newpr.rot.x, newpr.rot.y, newpr.rot.z);
             }
         }
@@ -1308,7 +1308,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 this.showText_waitTime = ((float)this.showText.Length) / 10f;
                 this.showText_waitTime = Math.Max(showText_waitTime, 1f);
             }
-            Util.debug(string.Format("line{0} show:表示文字列「{1}」 ", currentExecuteLine.ToString(), this.showText));
+            Util.Debug(string.Format("line{0} show:表示文字列「{1}」 ", currentExecuteLine.ToString(), this.showText));
         }
         /// <summary>
         /// talk/talkrepeat　コマンドの実行
@@ -1318,7 +1318,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         /// <param name="lineNo"></param>
         private void exec_talk(Dictionary<string, string> paramDict, bool loop = false, int lineNo = -1)
         {
-            Util.debug(string.Format("line{0} : talk ", currentExecuteLine.ToString()));
+            Util.Debug(string.Format("line{0} : talk ", currentExecuteLine.ToString()));
             List<IMaid> maidList = selectMaid(paramDict);
             foreach (IMaid maid in maidList)
             {
@@ -1432,7 +1432,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 scriptFinished = true; return;
             }
             currentExecuteLine = labelMap[gotoLabel];
-            Util.debug(string.Format("line{0} : 「{1}」へジャンプしました", currentExecuteLine.ToString(), gotoLabel));
+            Util.Debug(string.Format("line{0} : 「{1}」へジャンプしました", currentExecuteLine.ToString(), gotoLabel));
         }
         private void exec_call(string gotoLabel)
         {
@@ -1443,7 +1443,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             }
             callStack.Push(new StackInfo(currentExecuteLine));
             currentExecuteLine = labelMap[gotoLabel];
-            Util.debug(string.Format("line{0}  call: 「{1}」へジャンプしました", currentExecuteLine.ToString(), gotoLabel));
+            Util.Debug(string.Format("line{0}  call: 「{1}」へジャンプしました", currentExecuteLine.ToString(), gotoLabel));
         }
         private void exec_exit()
         {
@@ -1455,7 +1455,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 return;
             }
             currentExecuteLine = callStack.Pop().calledLineNo;
-            Util.debug(string.Format("line{0} exit: 「{1}」へジャンプしました", _currentLineNo.ToString(), currentExecuteLine));
+            Util.Debug(string.Format("line{0} exit: 「{1}」へジャンプしました", _currentLineNo.ToString(), currentExecuteLine));
         }
         /// <summary>
         /// 選択肢項目を追加
@@ -1481,7 +1481,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 command = Selection.CommandType.EXEC;
             }
             selection_selectionList.Add(new Selection(itemViewStr, paramLabel, command));
-            Util.debug(string.Format("選択肢「{0}」を追加", itemViewStr));
+            Util.Debug(string.Format("選択肢「{0}」を追加", itemViewStr));
         }
     }
 }

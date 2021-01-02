@@ -19,7 +19,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
 {
     [PluginFilter("COM3D2x64"), PluginFilter("COM3D2x86"), PluginFilter("COM3D2VRx64"),
     PluginFilter("COM3D2OHx64"), PluginFilter("COM3D2OHx86"), PluginFilter("COM3D2OHVRx64"),
-    PluginName("Scriplay"), PluginVersion("0.1.0.0 edit by lilly")]
+    PluginName("ScriplayLilly2"), PluginVersion("0.1.0.0 edit by lilly")]
     public class ScriplayPlugin : ExPluginBase
     {
         //　設定クラス（Iniファイルで読み書きしたい変数はここに格納する）
@@ -168,7 +168,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         //指定座標へ一瞬でカメラを移動
         public static void moveCamera(Vector3 worldPosition, Vector3 worldAngle, float distance = 0f)
         {
-            Util.debug(string.Format("カメラ移動 " + Util.showPosAngle(worldPosition, worldAngle) + ", d:{0:f2}", distance));
+            Util.Debug(string.Format("カメラ移動 " + Util.showPosAngle(worldPosition, worldAngle) + ", d:{0:f2}", distance));
             Vector3 cameraAngle = new Vector3(worldAngle.x, worldAngle.y, worldAngle.z);
             CameraMain camera = GameMain.Instance.MainCamera;
             camera.transform.eulerAngles = cameraAngle;
@@ -208,7 +208,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 Maid m = cm.GetMaid(i);
                 if (!isMaidAvailable(m)) continue;
                 maidList.Add(new IMaid(i, m));
-                Util.info(string.Format("メイド「{0}」を検出しました을 발견했습니다", m.status.fullNameJpStyle));
+                Util.Info(string.Format("メイド「{0}」を検出しました을 발견했습니다", m.status.fullNameJpStyle));
             }
             //男は最大6人、cm.GetManCount()は機能してない？ぽいので決め打ちでループ回す。
             for (int i = 0; i < 6; i++)
@@ -216,7 +216,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 Maid m = cm.GetMan(i);  //無効な男Noならnullが返ってくる、nullチェックする
                 if (!isManAvailable(m)) continue;
                 manList.Add(new IMaid(i, m, isMan: true));
-                Util.info(string.Format("ご主人様「{0}」を検出しました을 발견했습니다", m.status.fullNameJpStyle));
+                Util.Info(string.Format("ご主人様「{0}」を検出しました을 발견했습니다", m.status.fullNameJpStyle));
             }
             GameMain.Instance.SoundMgr.StopSe();
         }
@@ -264,7 +264,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         private void load_ConfigCsv()
         {
-            Util.info("CSVファイル読み込み");
+            Util.Info("CSVファイル読み込み");
             OnceVoiceTable.init();
             LoopVoiceTable.init();
             MotionTable.init();
@@ -276,7 +276,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             {
                 string basename = Path.GetFileNameWithoutExtension(fullpath);
                 filenameList += basename + "\r\\n";
-                Util.info(string.Format("CSV:{0}", basename));
+                Util.Info(string.Format("CSV:{0}", basename));
                 if (basename.Contains(cfg.motionListPrefix))
                 {
                     MotionTable.parse(Util.ReadCsvFile(fullpath, false), basename);
@@ -295,7 +295,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 }
             }
             if (filenameList == "\r\n") filenameList = "（CSVファイルが見つかりませんでした）";
-            Util.info(filenameList);
+            Util.Info(filenameList);
             foreach (string s in MotionTable.getCategoryList())
             {
                 motionCategorySet.Add(s);
@@ -308,7 +308,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         private void load_motionGameData(bool allLoad = true)
         {
             // COM3D2のモーションファイル全列挙
-            Util.info("モーションファイル読み込み開始");
+            Util.Info("モーションファイル読み込み開始");
             motionNameAllList.Clear();
             if (!allLoad)
             {
@@ -340,7 +340,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 added += s + "\r\n";
             }
             //Util.debug(added);
-            Util.info("モーションファイル読み込み終了");
+            Util.Info("モーションファイル読み込み終了");
             //絶頂モーションファイル名リスト　作成
             foreach (string filename in motionNameAllList)
             {
@@ -356,7 +356,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
         }
         public void OnLevelWasLoaded(int level)
         {
-
+            Util.Info(string.Format("OnLevelWasLoaded:{0}", level));
             VRUI.OnLevelWasLoaded(level);
             //初回スクリプト読み込み
             if (scripts_fullpathList.Count == 0) reload_scriptList();
@@ -373,7 +373,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode sceneMode)
         {
-            
+            Util.Info(string.Format("OnSceneLoaded:{0}", scene.name));
             VRUI.OnLevelWasLoaded(0);
             if (scripts_fullpathList.Count == 0) reload_scriptList();
             initMaidList();
@@ -501,14 +501,14 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 if (basename.StartsWith(cfg.libFilePrefix)) continue;
                 scripts_fullpathList.Add(fullpath);
             }
-            Util.info(string.Format("以下のスクリプトが見つかりました"));
+            Util.Info(string.Format("以下のスクリプトが見つかりました"));
             VRUI.setShowText("以下のスクリプトが見つかりました");
             int index = 0;
             VRUI.clearSelection();
             foreach (string fullpath in scripts_fullpathList)
             {
                 string basename = Path.GetFileNameWithoutExtension(fullpath);
-                Util.info(basename);
+                Util.Info(basename);
                 VRUI.setSelection(index, basename);
                 index++;
             }
@@ -763,7 +763,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 {
                     str.Append(v.filename + ",");
                 }
-                Util.info(string.Format("OnceVoiceTable　쿼리 결과 {0},{1} \r\n {2}", debug_ovtQueryMap["Personal"], debug_ovtQueryMap["Category"], str.ToString()));
+                Util.Info(string.Format("OnceVoiceTable　쿼리 결과 {0},{1} \r\n {2}", debug_ovtQueryMap["Personal"], debug_ovtQueryMap["Category"], str.ToString()));
             }
             if (GUILayout.Button("LoopVoice", gsButtonSmall))
             {
@@ -773,7 +773,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 {
                     str.Append(v.filename + ",");
                 }
-                Util.info(string.Format("LoopVoiceTable　쿼리 결과 {0},{1} \r\n {2}", debug_ovtQueryMap["Personal"], debug_ovtQueryMap["Category"], str.ToString()));
+                Util.Info(string.Format("LoopVoiceTable　쿼리 결과 {0},{1} \r\n {2}", debug_ovtQueryMap["Personal"], debug_ovtQueryMap["Category"], str.ToString()));
             }
             if (GUILayout.Button("Motion", gsButtonSmall))
             {
@@ -783,7 +783,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 {
                     str.Append(mi.motionName + ",");
                 }
-                Util.info(string.Format("MotionTable　쿼리 결과 {0}  \r\n {1}", debug_ovtQueryMap["Category"], str.ToString()));
+                Util.Info(string.Format("MotionTable　쿼리 결과 {0}  \r\n {1}", debug_ovtQueryMap["Category"], str.ToString()));
             }
             if (GUILayout.Button("Face", gsButtonSmall))
             {
@@ -793,7 +793,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 {
                     str.Append(mi + ",");
                 }
-                Util.info(string.Format("FaceTable　クエリ結果 {0}  \r\n {1}", debug_ovtQueryMap["Category"], str.ToString()));
+                Util.Info(string.Format("FaceTable　クエリ結果 {0}  \r\n {1}", debug_ovtQueryMap["Category"], str.ToString()));
             }
             GUILayout.EndHorizontal();
             if (maidList.Count != 0)
@@ -822,7 +822,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("表情", gsButton)) { StartCoroutine(_faceCapture_Coroutine()); }
             if (GUILayout.Button("メイド動", gsButton)) { StartCoroutine(_motionCapture_Coroutine(maidList[0])); }
-            if (GUILayout.Button("男動", gsButton)) { Util.debug("manList.count " + manList.Count); StartCoroutine(_motionCapture_Coroutine(manList[0])); }
+            if (GUILayout.Button("男動", gsButton)) { Util.Debug("manList.count " + manList.Count); StartCoroutine(_motionCapture_Coroutine(manList[0])); }
             if (GUILayout.Button("prop", gsButton)) { StartCoroutine(_propCapture_Coroutine()); }
             if (GUILayout.Button("終了", gsButton)) { quit_captureCoroutine = true; }
             GUILayout.EndHorizontal();
@@ -943,13 +943,19 @@ namespace COM3D2.ScriplayLilly2.Plugin
             //int gameMaidCount = GameMain.Instance.CharacterMgr.GetMaidCount();    
             //if (GameMain.Instance.CharacterMgr.GetMaid(0)!=null  && maidList.Count != gameMaidCount) initMaidList();
             if (GameMain.Instance.CharacterMgr.GetMaid(maidList.Count) != null    //メイド数1増えた場合 메이드 수 1 증가했을 경우
-                || (maidList.Count > 0 && GameMain.Instance.CharacterMgr.GetMaid(maidList.Count - 1) == null))     //メイド数1減った場合 메이드 수 1 줄어든 경우
+                || (maidList.Count > 0 && GameMain.Instance.CharacterMgr.GetMaid(maidList.Count - 1) == null) //メイド数1減った場合 메이드 수 1 줄어든 경우
+                )
+            {
+                Util.Info(string.Format("update:메이드수 변경된. {0}", maidList.Count));
                 initMaidList();
+            }
+
             if (debug_scriplayCreateQueue.Count != 0)
             {
                 string s = debug_scriplayCreateQueue.Dequeue();
                 this.scriplayContext = ScriplayContext.readScriptFile("スクリプト実行テスト스크립트 실행 테스트", s.Split(new string[] { "\r\n" }, StringSplitOptions.None));
             }
+
             try
             {
                 //スクリプトの実行v 스크립트 실행 v
@@ -958,11 +964,14 @@ namespace COM3D2.ScriplayLilly2.Plugin
                     scriplayContext.Update();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Util.Info(string.Format("update:scriplayContext.Update Exception"));
+                Util.Info(string.Format(e.Message));
                 initMaidList();
                 scriplayContext.scriptFinished = true;
             }
+
             //各メイド処理 각 메이드 처리
             try
             {
@@ -975,12 +984,14 @@ namespace COM3D2.ScriplayLilly2.Plugin
                     Util.sw_stop();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Util.debug("Exception update");
+                Util.Info(string.Format("update:in maidList:"));
+                Util.Info(string.Format(e.Message));
                 initMaidList();
             }
         }
+
         /// <summary>
         /// Updateの後に呼ばれる処理
         /// </summary>
@@ -1015,7 +1026,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
             {
                 if (quit_captureCoroutine) { quit_captureCoroutine = false; break; }
                 maid.change_faceAnime(sFaceAnimeName, faceFadeSec);
-                Util.info("表情撮影표정 촬영：" + sFaceAnimeName);
+                Util.Info("表情撮影표정 촬영：" + sFaceAnimeName);
                 yield return new WaitForSeconds(0.1f);
                 string p = save_screen(sFaceAnimeName);
                 savedimagePathDict[sFaceAnimeName] = p;
@@ -1027,12 +1038,12 @@ namespace COM3D2.ScriplayLilly2.Plugin
         {
             float motionCaptureWait = 0.5f;
             try { motionCaptureWait = float.Parse(capture_WaitSecText); }
-            catch (Exception e) { Util.info(e.StackTrace); yield break; }
+            catch (Exception e) { Util.Info(e.StackTrace); yield break; }
             List<string> targetMotionList = new List<string>();
             foreach (string s in motionNameAllList) { if (maid.isValidMotionName(s)) targetMotionList.Add(s); }
-            Util.info("motionCapture:start writing motionName list...");
+            Util.Info("motionCapture:start writing motionName list...");
             writeTextListHTML(DateTime.Now.ToString("yyyyMMdd-HHmmss") + "_motionList.html", Util.list2Str(targetMotionList, "\r\n"));
-            Util.info("motionCapture:finished writing.");
+            Util.Info("motionCapture:finished writing.");
             SortedDictionary<string, string> savedimagePathDict = new SortedDictionary<string, string>();
             foreach (string s in targetMotionList)
             {
@@ -1048,7 +1059,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 if (!maid.isValidMotionName(motionFileName)) continue;      //메이드라면 여성 모션 (* _f.anm) 만 재생할 수 있습니다.
                 if (motionFileName.StartsWith("dance_")) continue;                                      //많은 수의 사용하기 어려운
                 maid.change_Motion(motionFileName);
-                Util.info("모션 촬영：" + motionFileName);
+                Util.Info("모션 촬영：" + motionFileName);
                 //toast(motionFileName, motionCaptureWait);
                 yield return new WaitForSeconds(motionCaptureWait);
                 string p = save_screen(motionFileName);
@@ -1066,14 +1077,14 @@ namespace COM3D2.ScriplayLilly2.Plugin
             IMaid maid = maidList[0];
             float captureWait = 0.5f;
             try { captureWait = float.Parse(capture_WaitSecText); }
-            catch (Exception e) { Util.info(e.StackTrace); yield break; }
+            catch (Exception e) { Util.Info(e.StackTrace); yield break; }
             maid.prop_snapshot();
-            Util.info("propCapture:searching prop files...");
+            Util.Info("propCapture:searching prop files...");
             ICollection<string> propList = Util.GetFilenameList_byExtension(".menu", excludePropCaptureArray);
-            Util.info("propCapture:finished searching.");
-            Util.info("propCapture:start writing propName list...");
+            Util.Info("propCapture:finished searching.");
+            Util.Info("propCapture:start writing propName list...");
             writeTextListHTML(todayFilename("propList"), Util.list2Str(propList, "\r\n"));
-            Util.info("propCapture:finished writing.");
+            Util.Info("propCapture:finished writing.");
             SortedDictionary<string, string> savedimagePathDict = new SortedDictionary<string, string>();
             foreach (string s in propList)
             {
@@ -1087,7 +1098,7 @@ namespace COM3D2.ScriplayLilly2.Plugin
                 string propFileName = s;
                 propFileName = Util.forceEndsWith(propFileName, ".menu");
                 if (!maid.change_setProp(propFileName)) continue;
-                Util.info("prop撮影：" + propFileName);
+                Util.Info("prop撮影：" + propFileName);
                 //toast(propFileName, captureWait);
                 float wait = captureWait;
                 if (propFileName.StartsWith("_i_mywear")) wait += 2;        //_i_mywear 여러 prop 세트에 갈아 시간이 소요된다
@@ -1172,7 +1183,7 @@ figcaption {{
             }
             string relativeSavepath = get_save_screen_relativeFilepath(filename);
             string savePath = capture_saveBasePath + relativeSavepath;
-            Util.info("保存：" + savePath);
+            Util.Info("保存：" + savePath);
             createDirectory_fromFilepath_ifNotExist(savePath);
             bmp.Save(savePath, System.Drawing.Imaging.ImageFormat.Jpeg);
             return relativeSavepath;
@@ -1359,7 +1370,7 @@ figcaption {{
             {
                 Vector3 old = maid.transform.eulerAngles;
                 Vector3 v = new Vector3(keepX ? old.x : x_deg, keepY ? old.y : y_deg, keepZ ? old.z : z_deg);
-                Util.debug(string.Format("IMaid change_angleAbsolute:{0}", v.ToString()));
+                Util.Debug(string.Format("IMaid change_angleAbsolute:{0}", v.ToString()));
                 maid.transform.eulerAngles = v;
                 return maid.transform.eulerAngles;
             }
@@ -1391,7 +1402,7 @@ figcaption {{
             /// </summary>
             public void change_faceAnime(string faceAnime, float fadeTime = -1)
             {
-                if (isMan) { Util.info("ご主人様の表情は変更できません주인님의 표정은 변경할 수 없습니다"); return; }
+                if (isMan) { Util.Info("ご主人様の表情は変更できません주인님의 표정은 변경할 수 없습니다"); return; }
                 if (currentFaceAnime == faceAnime) return;
                 if (fadeTime == -1) fadeTime = cfg.faceAnimeFadeTime;
                 currentFaceAnime = faceAnime;
@@ -1404,7 +1415,7 @@ figcaption {{
                 string face = Util.pickOneOrEmptyString(faceAnimeList);
                 if (face.Equals(""))
                 {
-                    Util.info("表情リストが空でした");
+                    Util.Info("表情リストが空でした");
                     return;
                 }
                 change_faceAnime(face, fadeTime);
@@ -1421,7 +1432,7 @@ figcaption {{
             /// <returns></returns>
             public string change_FaceBlend(int hoho = -1, int namida = -1, bool enableYodare = false)
             {
-                if (isMan) { Util.info("ご主人様の表情は変更できません"); return ""; }
+                if (isMan) { Util.Info("ご主人様の表情は変更できません"); return ""; }
                 //頬・涙を-1,0,1,2,3のいずれかへ制限
                 hoho = (int)Mathf.Clamp(hoho, -1, 3);
                 namida = (int)Mathf.Clamp(namida, -1, 3);
@@ -1451,7 +1462,7 @@ figcaption {{
             /// <param name="eyePosY">両目の瞳Y位置　0~1で指定。　０で初期値</param>
             public void change_eyePosY(float eyePosY = 0f)
             {
-                if (isMan) { Util.info("ご主人様の目線は変更できません"); return; }
+                if (isMan) { Util.Info("ご主人様の目線は変更できません"); return; }
                 eyePosY *= 50;
                 eyePosY = Mathf.Clamp(eyePosY, 0f, 50f);    //最大値は不明　50？
                 Vector3 vl = maid.body0.trsEyeL.localPosition;
@@ -1510,7 +1521,7 @@ figcaption {{
                         }
                         else
                         {
-                            Util.info(string.Format("비슷한 모션를 찾을 수 없습니다. 현재 모션：{0}", getCurrentMotionName()));
+                            Util.Info(string.Format("비슷한 모션를 찾을 수 없습니다. 현재 모션：{0}", getCurrentMotionName()));
                             enable_similarMotion = false;
                         }
                     }
@@ -1560,7 +1571,7 @@ figcaption {{
             }
             public void change_eyeToCam(EyeHeadToCamState state)
             {
-                if (isMan) { Util.info("ご主人様の目線は変更できません주인님의 시선은 변경할 수 없습니다"); return; }
+                if (isMan) { Util.Info("ご主人様の目線は変更できません주인님의 시선은 변경할 수 없습니다"); return; }
                 this.eyeToCam_state = state;
             }
             public void change_headToCam(EyeHeadToCamState state, float fadeSec = -1f)
@@ -1679,7 +1690,7 @@ figcaption {{
                     //_1.+　などにマッチしたら、一致以降のモーション名部分を除去することでモーションベース名を求める
                     ret = regex.Replace(ret, kvp.Value);
                 }
-                Util.debug(string.Format("getMotionNameBase {0} -> {1}", motionName, ret));
+                Util.Debug(string.Format("getMotionNameBase {0} -> {1}", motionName, ret));
                 return ret;
             }
             public bool isValidMotionName(string motionFullName)
@@ -1735,12 +1746,12 @@ figcaption {{
                 }
                 if (possibleMotionList.Count == 0)
                 {
-                    Util.debug(string.Format("searchMotionList:유효한 모션이 없습니다 : {0} \r\n motionBaseName : {1},  全モーション数:{2}",
+                    Util.Debug(string.Format("searchMotionList:유효한 모션이 없습니다 : {0} \r\n motionBaseName : {1},  全モーション数:{2}",
                         this.maid.name, motionNameBase, motionNameAllList.Count));
                 }
                 else
                 {
-                    Util.debug(string.Format("searchMotionList:유효한 모션을 찾았습니다　: {0} \r\n motionBaseName : {1},  全モーション数:{2}, \r\n 見つけたモーション : {3}",
+                    Util.Debug(string.Format("searchMotionList:유효한 모션을 찾았습니다　: {0} \r\n motionBaseName : {1},  全モーション数:{2}, \r\n 見つけたモーション : {3}",
                  this.maid.name, motionNameBase, motionNameAllList.Count, Util.list2Str(possibleMotionList)));
                 }
                 return possibleMotionList;
@@ -1757,7 +1768,7 @@ figcaption {{
             /// <returns></returns>
             public string change_Motion(string motionName, bool isLoop = true, bool addQue = false, float motionSpeed = -1, float fadeTime = -1, float similarMotionSec = -1, bool updateMotionNameBase = true, float afterSpeed = -1)
             {
-                Util.info("change_Motion1 : " + motionName);
+                Util.Info("change_Motion1 : " + motionName);
                 List<string> ctrlAttList = inferMotionControlAttList(motionName);
                 string motionbase = getMotionNameBase(motionName);
                 if (motionSpeed == -1) motionSpeed = Util.var20p(1f);
@@ -1772,10 +1783,10 @@ figcaption {{
                     if (afterMotion_name == "") afterMotion_name = Util.pickOneOrEmptyString(searchMotionListByArray(motionbase, new string[] { "_taiki_" }));
                     if (afterMotion_name != "")
                     {
-                        Util.info("onceモーション「" + motionName + "」の後「" + afterMotion_name + "」를 실행합니다。");
+                        Util.Info("onceモーション「" + motionName + "」の後「" + afterMotion_name + "」를 실행합니다。");
                         isLoop = false;
                     }
-                    else { Util.info("onceモーション「" + motionName + "」다음에 수행 할 동작을 찾을 수 없습니다"); }
+                    else { Util.Info("onceモーション「" + motionName + "」다음에 수행 할 동작을 찾을 수 없습니다"); }
                 }
                 if (similarMotionSec > 0)
                 {
@@ -1796,7 +1807,7 @@ figcaption {{
                 {
                     List<string> motionList = searchMotionList(motionbase, ctrlAttList);
                     if (motionList.Count != 0) motionName = Util.pickOneOrEmptyString(motionList);
-                    else Util.info(string.Format("「{0}」부터 시작 모션를 찾을 수 없습니다。", motionName));
+                    else Util.Info(string.Format("「{0}」부터 시작 모션를 찾을 수 없습니다。", motionName));
                 }
                 //motionName = Util.forceEndsWith(motionName, ".anm");
                 if (updateMotionNameBase) this.motionNameBase = motionbase;
@@ -1936,8 +1947,8 @@ figcaption {{
                         change_slot(getSlotID_orThrow(maySlotname), visible); return;
                     }
                 }
-                catch (Exception e) { Util.info(e.Message); }
-                Util.info(string.Format("「{0}」という名前のSlotID/SlotCategoryは見つかりませんでした。", slotname_or_mpnName_or_SlotCategory));
+                catch (Exception e) { Util.Info(e.Message); }
+                Util.Info(string.Format("「{0}」という名前のSlotID/SlotCategoryは見つかりませんでした。", slotname_or_mpnName_or_SlotCategory));
             }
             //prop名によく使われる、MPNの短縮形の対応
             public static Dictionary<string, string> MPN_abbreviation_mapping = new Dictionary<string, string>()
@@ -1981,7 +1992,7 @@ figcaption {{
                         if (propFilename.ToLower().Contains(kvp.Key.ToLower())) { mpnName = kvp.Value; mpn = getMPN(mpnName); break; }
                     }
                 }
-                if (mpnName == "") { Util.info(propFilename + "という名前のpropがどのMPN部位のものかわかりません。MPNを明示してください。"); return false; }
+                if (mpnName == "") { Util.Info(propFilename + "という名前のpropがどのMPN部位のものかわかりません。MPNを明示してください。"); return false; }
                 return change_setProp(propFilename, mpn, f_nFileNameRID);
             }
             public bool change_setProp(string propFilename, MPN mpn, int f_nFileNameRID = 0)
@@ -1989,17 +2000,17 @@ figcaption {{
                 if (propFilename == "") return false;
                 foreach (MPN banned in new MPN[] { MPN.body, MPN.set_body, MPN.head, MPN.null_mpn })
                 {
-                    if (mpn == banned) { Util.info("setProp:Scriplayから" + banned + "にpropをセットすることはできません。"); return false; }
+                    if (mpn == banned) { Util.Info("setProp:Scriplayから" + banned + "にpropをセットすることはできません。"); return false; }
                 }
                 propFilename = Util.forceEndsWith(propFilename, ".menu");
                 maid.SetProp(mpn, propFilename, f_nFileNameRID, true, false); //tagは装着部位のslot名と同じものとする。
                 propChanged = true;
-                Util.debug(Util.getMpnName(mpn) + "に" + propFilename + "というpropをセットしました");
+                Util.Debug(Util.getMpnName(mpn) + "に" + propFilename + "というpropをセットしました");
                 try
                 {
                     change_slot(Util.getMpnName(mpn), true);
                 }
-                catch (Exception e) { Util.info(e.Message); return true; }
+                catch (Exception e) { Util.Info(e.Message); return true; }
                 return true;
             }
             public void change_delProp(string propFilename)
@@ -2033,7 +2044,7 @@ figcaption {{
                     MaidProp mp = maid.GetProp(m);
                     if (mp.strTempFileName.ToLower() == propFilename.ToLower()) { return m; }
                 }
-                Util.info(propFilename + "という名前のpropが設定されたMPNは見つかりませんでした。");
+                Util.Info(propFilename + "という名前のpropが設定されたMPNは見つかりませんでした。");
                 return MPN.null_mpn;
             }
             public static TBody.SlotID getSlotID_orThrow(string slotName)
@@ -2050,7 +2061,7 @@ figcaption {{
                 {
                     if (mpnName.ToLower().Equals(Util.getMpnName(id).ToLower())) return id;
                 }
-                Util.info(mpnName + "という名前のMPNは見つかりませんでした。");
+                Util.Info(mpnName + "という名前のMPNは見つかりませんでした。");
                 return MPN.null_mpn;
             }
             public static Dictionary<string, string> cloth_dict = new Dictionary<string, string>()
@@ -2112,7 +2123,7 @@ figcaption {{
                     MaidProp mp = maid.GetProp(mpn);
                     string mpnStr = Util.getMpnName(mpn);
                     prop_snapshotDict[mpnStr] = mp.strFileName;
-                    Util.debug(string.Format("{0}: {1} - {2},  temp:{3}", this.maid.status.fullNameJpStyle, mpnStr, mp.strFileName, mp.strTempFileName));
+                    Util.Debug(string.Format("{0}: {1} - {2},  temp:{3}", this.maid.status.fullNameJpStyle, mpnStr, mp.strFileName, mp.strTempFileName));
                 }
             }
             //MaidPropのTemp（strTempFileName）に本元を復元して、見た目復活させる
@@ -2133,7 +2144,7 @@ figcaption {{
             }
             public void change_onceVoice(List<string> VoiceList, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
             {
-                if (isMan) { Util.info("주인님의 음성은 변경할 수 없습니다"); return; }
+                if (isMan) { Util.Info("주인님의 음성은 변경할 수 없습니다"); return; }
                 if (getPlayingVoiceState() == PlayingVoiceState.LoopVoice)
                 {
                     loopVoiceBackuped = true;
@@ -2142,7 +2153,7 @@ figcaption {{
             }
             public void change_onceVoice(List<VoiceTable.VoiceInfo> VoiceInfoList)
             {
-                if (isMan) { Util.info("주인님의 음성은 변경할 수 없습니다"); return; }
+                if (isMan) { Util.Info("주인님의 음성은 변경할 수 없습니다"); return; }
                 if (getPlayingVoiceState() == PlayingVoiceState.LoopVoice)
                 {
                     loopVoiceBackuped = true;
@@ -2155,7 +2166,7 @@ figcaption {{
             /// <param name="VoiceList"></param>
             public void change_LoopVoice(List<string> VoiceList, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
             {
-                if (isMan) { Util.info("ご主人様の音声は変更できません"); return; }
+                if (isMan) { Util.Info("ご主人様の音声は変更できません"); return; }
                 currentLoopVoice = _playVoice(VoiceList.ToArray(), isLoop: true, startSec: startSec, fadeinSec: fadeinSec, intervalSec: intervalSec);
             }
             public void change_LoopVoice(string voicename, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
@@ -2166,12 +2177,12 @@ figcaption {{
             }
             public void change_LoopVoice(List<VoiceTable.VoiceInfo> VoiceInfoList)
             {
-                if (isMan) { Util.info("주인님의 음성은 변경할 수 없습니다"); return; }
+                if (isMan) { Util.Info("주인님의 음성은 변경할 수 없습니다"); return; }
                 currentLoopVoice = _playVoice(VoiceInfoList, isLoop: true);
             }
             public void change_stopVoice()
             {
-                if (isMan) { Util.info("ご主人様の音声は変更できません"); return; }
+                if (isMan) { Util.Info("ご主人様の音声は変更できません"); return; }
                 maid.AudioMan.Stop();
             }
             /// <summary>
@@ -2193,14 +2204,14 @@ figcaption {{
                 maid.AudioMan.audiosource.time = startSec;
                 this.voicePlayIntervalSec = intervalSec;
                 string loopStr = isLoop ? "ループあり" : "ループなし";
-                Util.info(string.Format("음성을 재생：{0}, {1}", playVoice, loopStr));
+                Util.Info(string.Format("음성을 재생：{0}, {1}", playVoice, loopStr));
                 return playVoice;
             }
             private string _playVoice(string[] voiceList, bool isLoop = true, int exclusionVoiceIndex = -1, float startSec = 0f, float fadeinSec = 0f, float intervalSec = 0f)
             {
                 if (voiceList.Length == 0)
                 {
-                    Util.info("VoiceList가 비어 있습니다");
+                    Util.Info("VoiceList가 비어 있습니다");
                     throw new ArgumentException("VoiceList가 비어 있습니다");
                 }
                 int voiceIndex;
@@ -2214,7 +2225,7 @@ figcaption {{
             {
                 if (voiceInfoList.Count == 0)
                 {
-                    Util.info("VoiceList가 비어 있습니다");
+                    Util.Info("VoiceList가 비어 있습니다");
                     throw new ArgumentException("VoiceList가 비어 있습니다");
                 }
                 //特定数を除外して、再生するボイスNo.をランダムに生成
@@ -2334,7 +2345,7 @@ figcaption {{
                     ret.hashKey = (int)morph.hash[sTag];
                     break;
                 }
-                if (ret.morph == null) Util.info(string.Format("{0}のボディにシェイプキー「{1}」が見つかりませんでした。", this.maid.name, sTag));
+                if (ret.morph == null) Util.Info(string.Format("{0}のボディにシェイプキー「{1}」が見つかりませんでした。", this.maid.name, sTag));
                 return ret;
             }
             /// <summary>
@@ -2507,8 +2518,8 @@ figcaption {{
             {
                 if (!PersonnalList.uniqueNameList.Contains(seikaku))
                 {
-                    Util.info(string.Format("{0}に性格設定できませんでした。「{1}」という性格はありません。以下の候補から性格を入力してください。", this.maid.status.nickName, seikaku));
-                    Util.info(PersonnalList.uniqueNameList.ToString());
+                    Util.Info(string.Format("{0}に性格設定できませんでした。「{1}」という性格はありません。以下の候補から性格を入力してください。", this.maid.status.nickName, seikaku));
+                    Util.Info(PersonnalList.uniqueNameList.ToString());
                 }
                 this.sPersonal = seikaku;
             }
@@ -2688,10 +2699,10 @@ figcaption {{
                 string sheetName = getUniqueSheetName(sPersonal, category);
                 if (!voiceDataSet.Tables.Contains(sheetName))
                 {
-                    Util.info(string.Format("{0}테이블에서「{1}」라는 성격 카테고리를 찾을 수 없습니다", voiceType, sheetName));
+                    Util.Info(string.Format("{0}테이블에서「{1}」라는 성격 카테고리를 찾을 수 없습니다", voiceType, sheetName));
                     if (hannyou_seikaku)
                     {
-                        Util.info(string.Format("{0}대신 범용 성격 테이블「{1}」에서 찾습니다", voiceType, getUniqueSheetName(HANNYOU_SEIKAKU, category)));
+                        Util.Info(string.Format("{0}대신 범용 성격 테이블「{1}」에서 찾습니다", voiceType, getUniqueSheetName(HANNYOU_SEIKAKU, category)));
                         return queryTable(HANNYOU_SEIKAKU, category, hannyou_seikaku: false);
                     }
                     return ret;
@@ -2707,10 +2718,10 @@ figcaption {{
                 }
                 if (ret.Count == 0)
                 {
-                    Util.info(string.Format("{0}テーブルから「{1}」という名前の性格・カテゴリは見つかりませんでした", voiceType, sheetName));
+                    Util.Info(string.Format("{0}テーブルから「{1}」という名前の性格・カテゴリは見つかりませんでした", voiceType, sheetName));
                     if (hannyou_seikaku)
                     {
-                        Util.info(string.Format("{0}のかわりに汎用性格テーブル「{1}」から探します", voiceType, getUniqueSheetName(HANNYOU_SEIKAKU, category)));
+                        Util.Info(string.Format("{0}のかわりに汎用性格テーブル「{1}」から探します", voiceType, getUniqueSheetName(HANNYOU_SEIKAKU, category)));
                         return queryTable(HANNYOU_SEIKAKU, category, hannyou_seikaku: false);
                     }
                 }
@@ -2844,10 +2855,10 @@ figcaption {{
                     }
                     catch (Exception e)
                     {
-                        Util.debug(string.Format("MotionTable에서 읽기 실패:{0} \r\n 오류 내용 : {1}", dr.ToString(), e.StackTrace));
+                        Util.Debug(string.Format("MotionTable에서 읽기 실패:{0} \r\n 오류 내용 : {1}", dr.ToString(), e.StackTrace));
                     }
                 }
-                Util.debug(string.Format("{0}\r\n  {1}\r\n  검색 결과\r\n  {2}", comment, query, Util.list2Str(ret)));
+                Util.Debug(string.Format("{0}\r\n  {1}\r\n  검색 결과\r\n  {2}", comment, query, Util.list2Str(ret)));
                 return ret;
             }
             private static string createCondition(string category, string maidState = "-") // int feelMin = 0, int feelMax = 3)
@@ -2982,7 +2993,7 @@ figcaption {{
                 List<string> ret = new List<string>();
                 if (!faceDataSet.Tables.Contains(category))
                 {
-                    Util.info(string.Format("表情テーブルから「{0}」という名前のカテゴリは見つかりませんでした", category));
+                    Util.Info(string.Format("表情テーブルから「{0}」という名前のカテゴリは見つかりませんでした", category));
                     return ret;
                 }
                 //DataSetから指定カテゴリのテーブルを取得
@@ -2992,7 +3003,7 @@ figcaption {{
                 }
                 if (ret.Count == 0)
                 {
-                    Util.info(string.Format("表情テーブルから「{0}」という名前のカテゴリは見つかりませんでした", category));
+                    Util.Info(string.Format("表情テーブルから「{0}」という名前のカテゴリは見つかりませんでした", category));
                 }
                 return ret;
             }
@@ -3170,7 +3181,7 @@ figcaption {{
         {
             if (!pressedSecDict.ContainsKey(dir))
             {
-                Util.info(string.Format("get pressedSec : キー{0} がありません", dir.ToString()));
+                Util.Info(string.Format("get pressedSec : キー{0} がありません", dir.ToString()));
                 return 0f;
             }
             return pressedSecDict[dir];
@@ -3216,7 +3227,7 @@ figcaption {{
             else if (lDir == VRVirtualController.PadDirection.RIGHT || rDir == VRVirtualController.PadDirection.RIGHT)
             {
                 enterSelection(selectedItemIndex);
-                Util.info(string.Format("VRUI Selection {0}番目が選択されました", selectedItemIndex.ToString()));
+                Util.Info(string.Format("VRUI Selection {0}番目が選択されました", selectedItemIndex.ToString()));
             }
             //VRコントローラ　押し続け時間更新
             if (left.getPressedDirection() == VRVirtualController.PadDirection.UP || right.getPressedDirection() == VRVirtualController.PadDirection.UP)
@@ -3398,7 +3409,7 @@ figcaption {{
             _isVREnabled = gameDataPath.Contains("COM3D2OHVRx64") || gameDataPath.Contains("COM3D2VRx64") || Environment.CommandLine.ToLower().Contains("/vr");
             if (!_isVREnabled)
             {
-                Util.info("VR環境ではありません");
+                Util.Info("VR環境ではありません");
                 return;
             }
             //タブレット取得
@@ -3407,17 +3418,17 @@ figcaption {{
                 OvrTablet[] tabletList = (OvrTablet[])UnityEngine.Object.FindObjectsOfType(typeof(OvrTablet));
                 if (tabletList.Length == 0)
                 {
-                    Util.info("タブレットが存在しません");
+                    Util.Info("タブレットが存在しません");
                     return;
                 }
                 else if (tabletList.Length > 1)
                 {
-                    Util.info("タブレットが複数存在します");
+                    Util.Info("タブレットが複数存在します");
                     return;
                 }
                 else
                 {
-                    Util.info("タブレットが見つかりました");
+                    Util.Info("タブレットが見つかりました");
                     tablet = tabletList[0];
                 }
             }
@@ -3426,7 +3437,7 @@ figcaption {{
         }
         public static void OnLevelWasLoaded(int level)
         {
-            Util.debug("VRUI 初期化 OnLevelWasLoaded");
+            Util.Debug("VRUI 初期化 OnLevelWasLoaded");
             init_onLevelWasLoaded();
         }
         internal static bool isSelected(int selectedIndex)
@@ -3457,7 +3468,7 @@ figcaption {{
             }
             public void init_controller()
             {
-                Util.debug(string.Format("init_controller : VR enabled{0} ", _isVREnabled.ToString()));
+                Util.Debug(string.Format("init_controller : VR enabled{0} ", _isVREnabled.ToString()));
                 if (!_isVREnabled) return;
                 switch (controllerType)
                 {
@@ -3470,11 +3481,11 @@ figcaption {{
                 }
                 if (controller == null)
                 {
-                    Util.info(string.Format("VRコントローラ（{0}）が見つかりませんでした", controllerType.ToString()));
+                    Util.Info(string.Format("VRコントローラ（{0}）が見つかりませんでした", controllerType.ToString()));
                 }
                 else
                 {
-                    Util.info(string.Format("VRコントローラ（{0}）が見つかりました", controllerType.ToString()));
+                    Util.Info(string.Format("VRコントローラ（{0}）が見つかりました", controllerType.ToString()));
                 }
             }
             /// <summary>
@@ -3609,29 +3620,29 @@ figcaption {{
         /// コンソールにテキスト出力
         /// </summary>
         /// <param name="message"></param>
-        public static void info(string message)
+        public static void Info(string message)
         {
             //Console.WriteLine("I " + PluginMessage(message));
-            UnityEngine.Debug.Log("I " + PluginMessage(message));
+            UnityEngine.Debug.Log( PluginMessage("I", message));
         }
         /// <summary>
         /// コンソールにテキスト出力
         /// </summary>
         /// <param name="message"></param>
-        public static void debug(string message)
+        public static void Debug(string message)
         {
             //Console.WriteLine("<color=" + cfg.debugPrintColor + ">" + PluginMessage(message) + "</color>");
             //UnityEngine.Debug.Log("<color=" + ScriplayPlugin.cfg.debugPrintColor + ">" + PluginMessage(message) + "</color>");
             if (ScriplayPlugin.cfg.enable_debugLog_onConsole)
             {
-                UnityEngine.Debug.Log("D " + PluginMessage(message));
+                UnityEngine.Debug.Log(PluginMessage("D" , message));
                 //Console.WriteLine("D " + Util.PluginMessage(message));
             }
 
         }
-        private static string PluginMessage(string originalMessage)
+        private static string PluginMessage(string level,string originalMessage)
         {
-            return string.Format("{0} > {1}", ScriplayPlugin.cfg.PluginName, originalMessage);
+            return string.Format("{0}.{1}:{2}", ScriplayPlugin.cfg.PluginName, level, originalMessage);
         }
         /// <summary>
         /// 指定範囲内から特定数を除外してランダムな整数を返す
@@ -3654,7 +3665,7 @@ figcaption {{
                 indexList.Remove(i);
             }
             int ret = indexList[random.Next(indexList.ToArray().Length)];   //random.Nextは指定値「未満」の、0以上の整数を返す
-            Util.debug(string.Format("randomInt min:{0}, max:{1}, selected:{2}, exclude:{3}, indexList:{4}", min, max, ret, Util.list2Str(excludeList), Util.list2Str(indexList)));
+            Util.Debug(string.Format("randomInt min:{0}, max:{1}, selected:{2}, exclude:{3}, indexList:{4}", min, max, ret, Util.list2Str(excludeList), Util.list2Str(indexList)));
             return ret;
         }
         public static readonly System.Random random = new System.Random();
@@ -3721,7 +3732,7 @@ figcaption {{
             if (!enSW) return;
             if (!(sw_frames > stopwatch_executeFrames)) return;
             sw.Stop();
-            Util.debug(string.Format("{0} 経過時間：{1} ms", s, sw.ElapsedMilliseconds));
+            Util.Debug(string.Format("{0} 経過時間：{1} ms", s, sw.ElapsedMilliseconds));
             sw.Reset();
             sw.Start();
         }
@@ -3743,14 +3754,14 @@ figcaption {{
                 FileInfo fileInfo = getFileFromList(motionName);
                 //string strFile = UTY.gameProjectPath + "\\PhotoModeData\\MyPose\\" + Util.forceEndsWith(motionName1, ".anm");
                 //FileInfo fileInfo = new FileInfo(strFile);
-                Util.debug("animate.5 : " + fileInfo.FullName);
+                Util.Debug("animate.5 : " + fileInfo.FullName);
 
                 //로컬 파일 있는지 확인 있을때(true), 없으면(false)
                 if (fileInfo.Exists)
                 {
                     // 처리
                     motionName = fileInfo.FullName;
-                    Util.debug("animate.2 : " + motionName);
+                    Util.Debug("animate.2 : " + motionName);
                     using (FileStream fileStream = new FileStream(motionName, FileMode.Open, FileAccess.Read))
                     {
                         byte[] array = new byte[fileStream.Length];
@@ -3764,7 +3775,7 @@ figcaption {{
                         {
                             maid.body0.CrossFade(motionName, array, false, isLoop, true, fadeTime, 1f);
                         }
-                        Util.debug(string.Format("모션 변경 {4}：{0}, loop:{1}, fade:{2}, speed:{3}", motionName, isLoop.ToString(), fadeTime, speed, maid.status.fullNameJpStyle));
+                        Util.Debug(string.Format("모션 변경 {4}：{0}, loop:{1}, fade:{2}, speed:{3}", motionName, isLoop.ToString(), fadeTime, speed, maid.status.fullNameJpStyle));
                     }
 
                 }
@@ -3772,7 +3783,7 @@ figcaption {{
                 {
                     //후행 공백은 무시
                     motionName = Util.forceEndsWith(motionName, ".anm");
-                    Util.debug("animate.1 : " + motionName);
+                    Util.Debug("animate.1 : " + motionName);
 
                     if (!addQue)
                     {
@@ -3783,19 +3794,19 @@ figcaption {{
                     {
                         maid.CrossFade(motionName, false, isLoop, true, fadeTime, 1f);
                     }
-                    Util.debug(string.Format("모션 변경 {4}：{0}, loop:{1}, fade:{2}, speed:{3}", motionName, isLoop.ToString(), fadeTime, speed, maid.status.fullNameJpStyle));
+                    Util.Debug(string.Format("모션 변경 {4}：{0}, loop:{1}, fade:{2}, speed:{3}", motionName, isLoop.ToString(), fadeTime, speed, maid.status.fullNameJpStyle));
 
                 }
             }
             catch (Exception e)
             {
-                Util.info("모션 재생 실패2" + e.Message + "\r\n" + e.StackTrace);
+                Util.Info("모션 재생 실패2" + e.Message + "\r\n" + e.StackTrace);
             }
         }
 
         private static FileInfo getFileFromList(string motionName)
         {
-            Util.info("getFileFromList2:" + motionName + ":" + motionName.Length + ":" + motionName.EndsWith(@"\") + ":" + motionName.EndsWith("\\\r"));
+            Util.Info("getFileFromList2:" + motionName + ":" + motionName.Length + ":" + motionName.EndsWith(@"\") + ":" + motionName.EndsWith("\\\r"));
             //string strFile= motionName;
             if (motionName.EndsWith(@"\") || motionName.EndsWith("\\\r"))
             {
@@ -3805,7 +3816,7 @@ figcaption {{
 
                 // List<string> list = getFileFullpathList(UTY.gameProjectPath + "\\PhotoModeData\\MyPose\\" + motionName.Substring(0, motionName.Length - 1), "anm");
                 List<string> list = getFileFullpathList(UTY.gameProjectPath + @"\PhotoModeData\MyPose\" + motionName, "anm");
-                Util.info("getFileFromList3:" + list[0]);
+                Util.Info("getFileFromList3:" + list[0]);
                 //         public static string pickOneOrEmptyString(List<string> list, int excludeIndex = -1)
                 if (list.Count == 0) return new FileInfo(motionName);
 
@@ -3866,7 +3877,7 @@ figcaption {{
         public static string[] readAllText(string filepath)
         {
             string[] csvTextAry;
-            Util.debug(string.Format("文字列読み込み開始 {0}", filepath));
+            Util.Debug(string.Format("文字列読み込み開始 {0}", filepath));
             string csvContent = System.IO.File.ReadAllText(filepath);   //UTF-8のみ読み込み可能
             csvTextAry = csvContent.Split(new string[] { "\r\n" }, StringSplitOptions.None);
             if (csvTextAry.Length < 2)
@@ -3874,7 +3885,7 @@ figcaption {{
                 //改行コードが\nだった場合の保険
                 csvTextAry = csvContent.Split(new string[] { "\n" }, StringSplitOptions.None);
             }
-            Util.debug(string.Format("文字列読み込み終了 {0}", filepath));
+            Util.Debug(string.Format("文字列読み込み終了 {0}", filepath));
             return csvTextAry;
         }
         /// <summary>
@@ -3924,13 +3935,13 @@ figcaption {{
                 }
                 csvData.Add(lineData.ToArray());
             }
-            Util.debug(string.Format("문자 배열로 분할 종료 {0}", file));
+            Util.Debug(string.Format("문자 배열로 분할 종료 {0}", file));
             return csvData.ToArray();
         }
         public static void validate_morphValue(string sTag, float morph_value)
         {
             if (morph_value < 0 | 1 < morph_value)
-                Util.info(string.Format("「{0}」に指定した値「{1}」は無効です。０～１の値を指定してください", sTag, morph_value));
+                Util.Info(string.Format("「{0}」に指定した値「{1}」は無効です。０～１の値を指定してください", sTag, morph_value));
         }
         public static float parseFloat(string v, float defaultValue = 0)
         {
@@ -3958,7 +3969,7 @@ figcaption {{
         {
             SortedDictionary<string, string> ret = new SortedDictionary<string, string>();
             if (excludeContentStrArray == null) excludeContentStrArray = new string[] { };
-            Util.debug("GetFilenameList_byExtension 除外対象：" + Util.list2Str(excludeContentStrArray));
+            Util.Debug("GetFilenameList_byExtension 除外対象：" + Util.list2Str(excludeContentStrArray));
             foreach (string file in GameUty.FileSystem.GetFileListAtExtension(suffix))      //몇 초 정도 걸릴
             {
                 string filenameWithoutExt = Path.GetFileNameWithoutExtension(file);
@@ -4031,7 +4042,7 @@ figcaption {{
                 filename = loadedFileList[i];
                 i++;
             }
-            Util.info(string.Format("{0} line{1}:{2}", filename, lineNoinFile, message));
+            Util.Info(string.Format("{0} line{1}:{2}", filename, lineNoinFile, message));
         }
         private bool isOriginNull()
         {
@@ -4156,18 +4167,18 @@ figcaption {{
                 if (reg_scriptInfo.IsMatch(s))
                 {
                     version = int.Parse(parseParameter(reg_scriptInfo, s)["version"]);
-                    Util.info("スクリプトバージョンを検出しました : " + s);
+                    Util.Info("スクリプトバージョンを検出しました : " + s);
                     break;
                 }
             }
             if (version == -1)
             {
-                Util.info("スクリプトにバージョンの記述がありませんでした。最新版スクリプトとして読み込みます。");
+                Util.Info("スクリプトにバージョンの記述がありませんでした。最新版スクリプトとして読み込みます。");
                 version = LATEST_VERSION;
             }
             if (version < 1 | LATEST_VERSION < version)
             {
-                Util.info("不明なバージョンです。最新版スクリプトとして読み込みます。　：　version " + version);
+                Util.Info("不明なバージョンです。最新版スクリプトとして読み込みます。　：　version " + version);
                 version = LATEST_VERSION;
             }
             List<string> allScriptList = new List<string>();
@@ -4182,7 +4193,7 @@ figcaption {{
                 _loadedFileList.Add(fi1.Name);
                 _startLineNoList.Add(_startLineNoList.Last() + array.Length);
                 allScriptList.AddRange(array);
-                Util.info(string.Format("「{0}」をライブラリとして読み込みました", fi1.Name));
+                Util.Info(string.Format("「{0}」をライブラリとして読み込みました", fi1.Name));
             }
             ScriplayContext ret;
             switch (version)
@@ -4202,7 +4213,7 @@ figcaption {{
         }
         public static ScriplayContext readScriptFile(string filePath)
         {
-            Util.info(string.Format("スクリプトファイル読み込み： {0}", filePath));
+            Util.Info(string.Format("スクリプトファイル読み込み： {0}", filePath));
             FileInfo fi1 = new FileInfo(filePath);
             string[] contentArray = Util.readAllText(filePath);
             return readScriptFile(fi1.Name, contentArray);
@@ -4241,7 +4252,7 @@ figcaption {{
                 string[] kv = s.Split('=');
                 if (kv.Length != 2)
                 {
-                    Util.info(string.Format("line{0} : パラメータを読み込めませんでした。「key=value」形式になっていますか？"));
+                    Util.Info(string.Format("line{0} : パラメータを読み込めませんでした。「key=value」形式になっていますか？"));
                     continue;
                 }
                 ret.Add(kv[0], kv[1]);
